@@ -70,11 +70,18 @@ def generer_mot_de_passe():
 
     # met à jour la liste des sites pour les combobox
     sites_afficher = charger_sites()
-    combo_site_afficher['values'] = sites_afficher
-    combo_site_modifier['values'] = sites_afficher
+    selected_site_afficher = tk.StringVar(value=sites_afficher[0] if sites_afficher else "")
+    combo_site_afficher = ttk.Combobox(app, values=sites_afficher, textvariable=selected_site_afficher)
+    combo_site_afficher.pack()
+
+    sites_modifier = charger_sites()
+    selected_site_modifier = tk.StringVar(value=sites_modifier[0] if sites_modifier else "")
+    combo_site_modifier = ttk.Combobox(app, values=sites_modifier, textvariable=selected_site_modifier)
+    combo_site_modifier.pack()
+
 def afficher_mot_de_passe():
     cle = charger_cle()
-    site_a_afficher = combo_site_afficher.get()
+    site_a_afficher = selected_site_afficher.get()
 
     if not cle:
         label_mot_de_passe_afficher.config(text="Erreur: La clé de chiffrement est manquante.")
@@ -92,7 +99,7 @@ def afficher_mot_de_passe():
 
 def modifier_mot_de_passe():
     cle = charger_cle()
-    site_a_modifier = combo_site_modifier.get()
+    site_a_modifier = selected_site_modifier.get()
 
     if not cle:
         label_mot_de_passe_modifier.config(text="Erreur: La clé de chiffrement est manquante.")
@@ -140,7 +147,8 @@ label_site_afficher = tk.Label(app, text="Nom du site à afficher :")
 label_site_afficher.pack()
 
 sites_afficher = charger_sites()
-combo_site_afficher = ttk.Combobox(app, values=sites_afficher)
+selected_site_afficher = tk.StringVar(value=sites_afficher[0] if sites_afficher else "")
+combo_site_afficher = ttk.Combobox(app, values=sites_afficher, textvariable=selected_site_afficher)
 combo_site_afficher.pack()
 
 button_afficher = tk.Button(app, text="Afficher Mot de Passe", command=afficher_mot_de_passe)
@@ -154,7 +162,8 @@ label_site_modifier = tk.Label(app, text="Nom du site à modifier :")
 label_site_modifier.pack()
 
 sites_modifier = charger_sites()
-combo_site_modifier = ttk.Combobox(app, values=sites_modifier)
+selected_site_modifier = tk.StringVar(value=sites_modifier[0] if sites_modifier else "")
+combo_site_modifier = ttk.Combobox(app, values=sites_modifier, textvariable=selected_site_modifier)
 combo_site_modifier.pack()
 
 label_longueur_modifier = tk.Label(app, text="Nouvelle longueur du mot de passe :")
