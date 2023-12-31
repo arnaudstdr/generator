@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from cryptography.fernet import Fernet
 import random
 import string
@@ -41,6 +42,14 @@ def sauvegarder_cle(cle):
     with open('cle.txt', 'wb') as fichier:
         fichier.write(cle)
 
+def charger_sites():
+    try:
+        with open('mots_de_passe_encrypted.txt', 'r') as fichier:
+            sites = [ligne.split(':')[0].strip() for ligne in fichier]
+        return sites
+    except FileNotFoundError:
+        return []
+
 def generer_mot_de_passe():
     cle = charger_cle()
 
@@ -59,9 +68,13 @@ def generer_mot_de_passe():
     mot_de_passe_dechiffre = dechiffrer_mot_de_passe(cle, mot_de_passe_chiffre)
     label_mot_de_passe.config(text=f"Mot de passe généré et stocké en toute sécurité pour {site} : {mot_de_passe_dechiffre}")
 
+    # met à jour la liste des sites pour les combobox
+    sites_afficher = charger_sites()
+    combo_site_afficher['values'] = sites_afficher
+    combo_site_modifier['values'] = sites_afficher
 def afficher_mot_de_passe():
     cle = charger_cle()
-    site_a_afficher = entry_site_afficher.get()
+    site_a_afficher = combo_site_afficher.get()
 
     if not cle:
         label_mot_de_passe_afficher.config(text="Erreur: La clé de chiffrement est manquante.")
@@ -79,7 +92,7 @@ def afficher_mot_de_passe():
 
 def modifier_mot_de_passe():
     cle = charger_cle()
-    site_a_modifier = entry_site_modifier.get()
+    site_a_modifier = combo_site_modifier.get()
 
     if not cle:
         label_mot_de_passe_modifier.config(text="Erreur: La clé de chiffrement est manquante.")
@@ -122,12 +135,13 @@ button_generer.pack()
 label_mot_de_passe = tk.Label(app, text="")
 label_mot_de_passe.pack()
 
-# Nouveau champ pour afficher le mot de passe
+# Nouveau champ pour afficher le mot de passe avec un tableau déroulant
 label_site_afficher = tk.Label(app, text="Nom du site à afficher :")
 label_site_afficher.pack()
 
-entry_site_afficher = tk.Entry(app)
-entry_site_afficher.pack()
+sites_afficher = charger_sites()
+combo_site_afficher = ttk.Combobox(app, values=sites_afficher)
+combo_site_afficher.pack()
 
 button_afficher = tk.Button(app, text="Afficher Mot de Passe", command=afficher_mot_de_passe)
 button_afficher.pack()
@@ -135,12 +149,13 @@ button_afficher.pack()
 label_mot_de_passe_afficher = tk.Label(app, text="")
 label_mot_de_passe_afficher.pack()
 
-# Nouveau champ pour modifier le mot de passe
+# Nouveau champ pour modifier le mot de passe avec un tableau déroulant
 label_site_modifier = tk.Label(app, text="Nom du site à modifier :")
 label_site_modifier.pack()
 
-entry_site_modifier = tk.Entry(app)
-entry_site_modifier.pack()
+sites_modifier = charger_sites()
+combo_site_modifier = ttk.Combobox(app, values=sites_modifier)
+combo_site_modifier.pack()
 
 label_longueur_modifier = tk.Label(app, text="Nouvelle longueur du mot de passe :")
 label_longueur_modifier.pack()
